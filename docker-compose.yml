@@ -1,0 +1,73 @@
+nginx:
+  build: ./nginx
+
+  ports:
+   - 80:80
+   - 443:443
+
+  volumes:
+   # 2048bit DH curve
+   - ./nginx/dhparam2048.pem:/etc/nginx/dhparam2048.pem:ro
+  
+   # Upstreams
+   - ./nginx/upstreams/php7.conf:/etc/nginx/conf.d/php7.conf:ro 
+ 
+   # FastCGI
+   - ./nginx/fastcgi.conf:/etc/nginx/fastcgi.conf:ro
+
+   # Parts
+   - ./nginx/parts/caching.conf:/etc/nginx/parts/caching.conf:ro 
+
+   # Sites
+   - ./nginx/sites/:/etc/nginx/sites-enabled/:ro
+
+   # Data
+   - ./certs:/srv/certs:ro
+
+  volumes_from:
+    - data
+
+  links:
+   - php7
+ 
+php7:
+  build: ./php7
+
+  volumes:
+   - ./php7/php-fpm.conf:/usr/local/etc/php-fpm.conf
+   - ./php7/php.ini:/usr/local/etc/php/php.ini
+   - ./php7/pool.d:/usr/local/etc/pool.d/
+
+   # SSMTP
+   - ./ssmtp/revaliases:/etc/ssmtp/revaliases
+   - ./ssmtp/ssmtp.conf:/etc/ssmtp/ssmtp.conf
+
+   # CRON
+   - ./cron/componette-hourly:/etc/cron.d/componette-hourly
+   - ./cron/componette-daily:/etc/cron.d/componette-daily
+
+  volumes_from:
+   - data
+
+  links:
+   - db
+
+db:
+  build: ./mariadb
+
+  ports:
+   - 3306:3306
+
+  environment:
+   - MYSQL_ROOT_PASSWORD=dockerroot
+   - MYSQL_DATABASE=docker
+   - MYSQL_USER=docker
+   - MYSQL_PASSWORD=docker
+
+  volumes:
+   - /path/to/db:/var/lib/mysql
+
+data:
+  image: busybox
+  volumes:
+   - /path/to/stable:/srv/componette/stable
