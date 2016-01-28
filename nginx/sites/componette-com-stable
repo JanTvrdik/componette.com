@@ -27,7 +27,9 @@ server {
 
   # Nginx > 1.7.5
   # 5184000 => 60 days
-  add_header Strict-Transport-Security 'max-age=5184000; includeSubDomains; preload' always;
+  # 15552000 => 180 days
+  # 31536000 => 360 days
+  add_header Strict-Transport-Security 'max-age=15552000; includeSubDomains; preload' always;
 
   ssl_certificate /path/to/cert;
   ssl_certificate_key /path/to/cert;
