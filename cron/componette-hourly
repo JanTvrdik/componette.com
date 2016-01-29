@@ -3,4 +3,4 @@
 SHELL=/bin/sh
 PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 
-0 * * * * root cd /srv/componette/stable/cron && sh hourly >> hourly.log 2>&1
+0 * * * * www-data cd /srv/componette/stable/cron && sh hourly >> hourly.log 2>&1
