@@ -6,12 +6,16 @@ FROM php:7-fpm
 # - mbstring
 # - zip
 # - opcache
+# - gd
 RUN apt-get update && \
     docker-php-ext-install pdo pdo_mysql mysqli && \
     docker-php-ext-install mbstring && \
     apt-get install -y zlib1g-dev && \
     docker-php-ext-install zip && \
-    docker-php-ext-install opcache
+    docker-php-ext-install opcache && \
+    apt-get install -y libpng12-dev libjpeg62-turbo-dev libfreetype6-dev && \
+    docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ && \
+    docker-php-ext-install gd
 
 # Install cURL
 RUN apt-get install -y curl
